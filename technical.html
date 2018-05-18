@@ -26,6 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
     <link rel="prev" title="Tutorials" href="tutorials.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -88,6 +89,11 @@ callback are accessed from <code class="code docutils literal"><span class="pre"
 <p>All the methods from pyqtlet objects are mostly just calling a <cite>runJavaScript</cite> or
 <cite>getJsResponse</cite> for the appropriate JS code. So map modifying functions like <cite>setView</cite> or
 <cite>setMaxZoom</cite> are just calling the same code in JS.</p>
+<p>Another thing that we need to keep in mind while communicating with JS is passing objects
+as paramenters in options or otherwise. The object needs to be represented in the JS script
+string as an object, and not as a string or a python object. <cite>Evented</cite> has a method for
+this called <cite>_stringifyForJs</cite>, which recursively goes through dicts and replaces all the
+python objects with JS ones and makes it a string.</p>
 </div>
 <div class="section" id="javascript-python-communication">
 <h2>JavaScript -&gt; Python communication<a class="headerlink" href="#javascript-python-communication" title="Permalink to this headline">¶</a></h2>
@@ -155,6 +161,7 @@ if you are in the mood for something like that.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="tutorials.html" title="previous chapter">Tutorials</a></li>
+      <li>Next: <a href="contributing.html" title="next chapter">Contributing</a></li>
   </ul></li>
 </ul>
 </div><h3>Navigation</h3>
@@ -176,6 +183,7 @@ if you are in the mood for something like that.</p>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 
 

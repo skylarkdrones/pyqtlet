@@ -50,6 +50,12 @@ All the methods from pyqtlet objects are mostly just calling a `runJavaScript` o
 `getJsResponse` for the appropriate JS code. So map modifying functions like `setView` or
 `setMaxZoom` are just calling the same code in JS.
 
+Another thing that we need to keep in mind while communicating with JS is passing objects
+as paramenters in options or otherwise. The object needs to be represented in the JS script
+string as an object, and not as a string or a python object. `Evented` has a method for
+this called `_stringifyForJs`, which recursively goes through dicts and replaces all the
+python objects with JS ones and makes it a string.
+
 JavaScript -> Python communication
 ----------------------------------
 Communication from JavaScript is mostly required only for connecting events to their
