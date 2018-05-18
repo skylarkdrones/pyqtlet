@@ -1,0 +1,38 @@
+pyqtlet\.leaflet\.control package
+=================================
+
+Submodules
+----------
+
+pyqtlet\.leaflet\.control\.control module
+-----------------------------------------
+
+.. automodule:: pyqtlet.leaflet.control.control
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyqtlet\.leaflet\.control\.draw module
+--------------------------------------
+
+.. automodule:: pyqtlet.leaflet.control.draw
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyqtlet\.leaflet\.control\.layers module
+----------------------------------------
+
+.. automodule:: pyqtlet.leaflet.control.layers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyqtlet.leaflet.control
+    :members:
+    :undoc-members:
+    :show-inheritance:

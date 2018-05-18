@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyqtlet.leaflet.core package &#8212; pyqtlet beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyqtlet-leaflet-core-package">
+<h1>pyqtlet.leaflet.core package<a class="headerlink" href="#pyqtlet-leaflet-core-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyqtlet.leaflet.core.evented">
+<span id="pyqtlet-leaflet-core-evented-module"></span><h2>pyqtlet.leaflet.core.evented module<a class="headerlink" href="#module-pyqtlet.leaflet.core.evented" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyqtlet.leaflet.core.evented.Evented">
+<em class="property">class </em><code class="descclassname">pyqtlet.leaflet.core.evented.</code><code class="descname">Evented</code><span class="sig-paren">(</span><em>mapWidget=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqtlet/leaflet/core/evented.html#Evented"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtlet.leaflet.core.evented.Evented" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></code></p>
+<p>Base class for all pyqtlet objects. 
+Handles initiation, as well as all python&lt;-&gt;js communication</p>
+<dl class="method">
+<dt id="pyqtlet.leaflet.core.evented.Evented.getJsResponse">
+<code class="descname">getJsResponse</code><span class="sig-paren">(</span><em>js</em>, <em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqtlet/leaflet/core/evented.html#Evented.getJsResponse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtlet.leaflet.core.evented.Evented.getJsResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs javascript code in the mapWidget and triggers callback.</p>
+<p>Can be used for custom use cases where information is required
+from the mapwidget, and the existing code does not cover the
+requirement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>js</strong> (<em>str</em>) &#8211; The javascript code</li>
+<li><strong>callback</strong> (<em>function</em>) &#8211; The function that will consume the 
+javascript response</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Qt runs runJavaScript function asynchronously. So if we want 
+to get a response from leaflet, we need to force it to be sync
+In all that I have tried, I was unable to get the response from
+the same function, so I am converting it to a method with callback</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyqtlet.leaflet.core.evented.Evented.mapWidget">
+<code class="descname">mapWidget</code><em class="property"> = None</em><a class="headerlink" href="#pyqtlet.leaflet.core.evented.Evented.mapWidget" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyqtlet.leaflet.core.evented.Evented.runJavaScript">
+<code class="descname">runJavaScript</code><span class="sig-paren">(</span><em>js</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyqtlet/leaflet/core/evented.html#Evented.runJavaScript"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyqtlet.leaflet.core.evented.Evented.runJavaScript" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs javascript code in the mapWidget.</p>
+<p>Can be used for custom use cases where the existing code,
+methods etc. do not cover the requirements.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>js</strong> (<em>str</em>) &#8211; The javascript code</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyqtlet.leaflet.core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyqtlet.leaflet.core" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyqtlet</a></h1>
+
+
+
+
+
+
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-docs.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technical.html">Technical Details</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Skylark Drones.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/pyqtlet.leaflet.core.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

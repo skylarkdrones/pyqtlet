@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyqtlet.leaflet.layer.layer &#8212; pyqtlet beta documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     'beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyqtlet.leaflet.layer.layer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">..core</span> <span class="k">import</span> <span class="n">Evented</span>
+
+<div class="viewcode-block" id="Layer"><a class="viewcode-back" href="../../../../pyqtlet.leaflet.layer.html#pyqtlet.leaflet.layer.layer.Layer">[docs]</a><span class="k">class</span> <span class="nc">Layer</span><span class="p">(</span><span class="n">Evented</span><span class="p">):</span>
+
+    <span class="c1"># layerId is a static variable shared between all layers</span>
+    <span class="c1"># It is used to give unique names to layers</span>
+    <span class="n">layerId</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">layerName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span>
+
+    <span class="nd">@layerName</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">layerName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">jsName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map</span>
+
+    <span class="nd">@map</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_map</span> <span class="o">=</span> <span class="n">map_</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_map</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getNewLayerName</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_getNewLayerName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">layerName</span> <span class="o">=</span> <span class="s1">&#39;l</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layerId</span><span class="p">)</span>
+        <span class="n">Layer</span><span class="o">.</span><span class="n">layerId</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">layerName</span>
+
+<div class="viewcode-block" id="Layer.addTo"><a class="viewcode-back" href="../../../../pyqtlet.leaflet.layer.html#pyqtlet.leaflet.layer.layer.Layer.addTo">[docs]</a>    <span class="k">def</span> <span class="nf">addTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_</span><span class="p">):</span>
+        <span class="n">map_</span><span class="o">.</span><span class="n">addLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.removeFrom"><a class="viewcode-back" href="../../../../pyqtlet.leaflet.layer.html#pyqtlet.leaflet.layer.layer.Layer.removeFrom">[docs]</a>    <span class="k">def</span> <span class="nf">removeFrom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_</span><span class="p">):</span>
+        <span class="n">map_</span><span class="o">.</span><span class="n">removeLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.bindPopup"><a class="viewcode-back" href="../../../../pyqtlet.leaflet.layer.html#pyqtlet.leaflet.layer.layer.Layer.bindPopup">[docs]</a>    <span class="k">def</span> <span class="nf">bindPopup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">js</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{layerName}</span><span class="s1">.bindPopup(&quot;</span><span class="si">{content}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">layerName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">js</span> <span class="o">+=</span> <span class="s1">&#39;, </span><span class="si">{options}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">js</span> <span class="o">+=</span> <span class="s1">&#39;)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runJavaScript</span><span class="p">(</span><span class="n">js</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Layer.unbindPopup"><a class="viewcode-back" href="../../../../pyqtlet.leaflet.layer.html#pyqtlet.leaflet.layer.layer.Layer.unbindPopup">[docs]</a>    <span class="k">def</span> <span class="nf">unbindPopup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">js</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{layerName}</span><span class="s1">.unbindPopup()&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">layerName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runJavaScript</span><span class="p">(</span><span class="n">js</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.bindTooltip"><a class="viewcode-back" href="../../../../pyqtlet.leaflet.layer.html#pyqtlet.leaflet.layer.layer.Layer.bindTooltip">[docs]</a>    <span class="k">def</span> <span class="nf">bindTooltip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">js</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{layerName}</span><span class="s1">.bindTooltip(&quot;</span><span class="si">{content}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">layerName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">js</span> <span class="o">+=</span> <span class="s1">&#39;, </span><span class="si">{options}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">js</span> <span class="o">+=</span> <span class="s1">&#39;)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runJavaScript</span><span class="p">(</span><span class="n">js</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Layer.unbindTooltip"><a class="viewcode-back" href="../../../../pyqtlet.leaflet.layer.html#pyqtlet.leaflet.layer.layer.Layer.unbindTooltip">[docs]</a>    <span class="k">def</span> <span class="nf">unbindTooltip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">js</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{layerName}</span><span class="s1">.unbindTooltip()&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">layerName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layerName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runJavaScript</span><span class="p">(</span><span class="n">js</span><span class="p">)</span></div></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">pyqtlet</a></h1>
+
+
+
+
+
+
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../../leaflet.html">pyqtlet.leaflet</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api-docs.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../technical.html">Implementation Details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Skylark Drones.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

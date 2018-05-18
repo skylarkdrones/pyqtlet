@@ -1,0 +1,8 @@
+pyqtlet
+=======
+
+.. toctree::
+   :maxdepth: 1
+
+   pyqtlet
+   trial

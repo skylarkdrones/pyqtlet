@@ -1,0 +1,27 @@
+pyqtlet package
+===============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyqtlet.leaflet
+
+Submodules
+----------
+
+pyqtlet\.mapwidget module
+-------------------------
+
+.. automodule:: pyqtlet.mapwidget
+    :members:
+    :undoc-members:
+
+
+Module contents
+---------------
+
+.. automodule:: pyqtlet
+    :members:
+    :undoc-members:

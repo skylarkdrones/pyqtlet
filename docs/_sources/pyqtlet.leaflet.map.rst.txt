@@ -1,0 +1,8 @@
+L\.map Class
+============
+
+.. autoclass:: pyqtlet.leaflet.map.map.Map
+    :members:
+    :undoc-members:
+
+.. automethod:: pyqtlet.leaflet.map.map.Map.addLayer

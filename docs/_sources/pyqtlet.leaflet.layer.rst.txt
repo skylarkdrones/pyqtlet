@@ -1,0 +1,47 @@
+pyqtlet\.leaflet\.layer package
+===============================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyqtlet.leaflet.layer.marker
+    pyqtlet.leaflet.layer.tile
+    pyqtlet.leaflet.layer.vector
+
+Submodules
+----------
+
+pyqtlet\.leaflet\.layer\.featuregroup module
+--------------------------------------------
+
+.. automodule:: pyqtlet.leaflet.layer.featuregroup
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyqtlet\.leaflet\.layer\.layer module
+-------------------------------------
+
+.. automodule:: pyqtlet.leaflet.layer.layer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyqtlet\.leaflet\.layer\.layergroup module
+------------------------------------------
+
+.. automodule:: pyqtlet.leaflet.layer.layergroup
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyqtlet.leaflet.layer
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,22 @@
+pyqtlet\.leaflet\.layer\.marker package
+=======================================
+
+Submodules
+----------
+
+pyqtlet\.leaflet\.layer\.marker\.marker module
+----------------------------------------------
+
+.. automodule:: pyqtlet.leaflet.layer.marker.marker
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyqtlet.leaflet.layer.marker
+    :members:
+    :undoc-members:
+    :show-inheritance:

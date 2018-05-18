@@ -1,0 +1,22 @@
+pyqtlet\.leaflet\.core package
+==============================
+
+Submodules
+----------
+
+pyqtlet\.leaflet\.core\.evented module
+--------------------------------------
+
+.. automodule:: pyqtlet.leaflet.core.evented
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyqtlet.leaflet.core
+    :members:
+    :undoc-members:
+    :show-inheritance:

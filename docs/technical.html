@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Implementation Details &#8212; pyqtlet beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tutorials" href="tutorials.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="implementation-details">
+<h1>Implementation Details<a class="headerlink" href="#implementation-details" title="Permalink to this headline">¶</a></h1>
+<p>This document is an overview of the technical details of pyqtlet. It covers how the
+module is built, the problems that were faced, and how they were tackled.</p>
+<div class="section" id="structure">
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h2>
+<p>The folder and code structure of the leaflet section was designed to mimic that
+of the Leaflet library. I figured they had a better idea on as to why their code
+had been structured that way and didn&#8217;t want to mess with institutional knowledge
+like that. So now if someone familiar with the leaflet code wants to mess around
+with pyqtlet, they&#8217;ll know where to find the files they&#8217;re looking for.</p>
+<p>All the leaflet source code is included in the package so that the package is not
+dependent on any CDN or network connectivity.</p>
+</div>
+<div class="section" id="qwebengine">
+<h2>QWebEngine<a class="headerlink" href="#qwebengine" title="Permalink to this headline">¶</a></h2>
+<p>Qt offers a <cite>QWebEngine</cite> to handle all the web features. This is obviously the core of
+the package. The main widget, <code class="code docutils literal"><span class="pre">pyqtlet.mapWidget</span></code> is subclassed from <cite>QWebEngineView</cite>.</p>
+<p>To start off, <code class="code docutils literal"><span class="pre">mapWidget</span></code> loads the html from file, and loads the leaflet canvas
+into itself. To initiate the use of the pyqtlet library, the first pyqtlet object that is
+created should be <code class="code docutils literal"><span class="pre">L.map</span></code>. This links all further objects created in the module to
+the widget, by assigning the widget as a static variable to <code class="code docutils literal"><span class="pre">pyqtlet.core.Evented</span></code>,
+the base class in the module.</p>
+</div>
+<div class="section" id="creating-the-objects-in-leaflet">
+<h2>Creating the objects in Leaflet<a class="headerlink" href="#creating-the-objects-in-leaflet" title="Permalink to this headline">¶</a></h2>
+<p>Since QWebEnginePage allows us to run JavaScript code, it becomes fairly straightforward
+to start creating objects from python in the JS runtime. Every object (except abstract ones)
+in PyQt, during initialisation, are given their respective jsObject code. So for marker,
+the code would be <cite>L.marker</cite>. Evented then has a <code class="code docutils literal"><span class="pre">_createJsObject</span></code> that then runs
+the required javascript in the JS runtime.</p>
+<p>The names of layers, controls etc are all controlled using static variable in the respective
+baseclasses, such that layers are named <code class="code docutils literal"><span class="pre">l0</span></code>, <code class="code docutils literal"><span class="pre">l1</span></code> and so on. The name of the
+layer is then stored within the object in the <code class="code docutils literal"><span class="pre">jsName</span></code> attribute.</p>
+</div>
+<div class="section" id="python-javascript-communication">
+<h2>Python -&gt; JavaScript Communication<a class="headerlink" href="#python-javascript-communication" title="Permalink to this headline">¶</a></h2>
+<p>In order for pyqtlet to offer the functionality of a wrapper around a JS library, it is
+necessary to establish communication between JS to send commands and data between the
+runtimes. To send commands from Python to JS, we use <code class="code docutils literal"><span class="pre">QWebEnginePage.runJavaScript</span></code>
+method. This method can be called with a callback as well. The methods with and without
+callback are accessed from <code class="code docutils literal"><span class="pre">pyqtlet.core.Evented.getJsResponse</span></code> and
+<code class="code docutils literal"><span class="pre">pyqtlet.core.runJavaScript</span></code> respectively.</p>
+<p>All the methods from pyqtlet objects are mostly just calling a <cite>runJavaScript</cite> or
+<cite>getJsResponse</cite> for the appropriate JS code. So map modifying functions like <cite>setView</cite> or
+<cite>setMaxZoom</cite> are just calling the same code in JS.</p>
+</div>
+<div class="section" id="javascript-python-communication">
+<h2>JavaScript -&gt; Python communication<a class="headerlink" href="#javascript-python-communication" title="Permalink to this headline">¶</a></h2>
+<p>Communication from JavaScript is mostly required only for connecting events to their
+respective <cite>pyqtSignals</cite>. In order to do this, we need to set up a <code class="code docutils literal"><span class="pre">QWebChannel</span></code>.
+What the web channel allows us to do is to trigger python methods from JS code.</p>
+<p>In order to do this, we have to first <cite>register</cite> our python objects with the web channel.
+This happens in the initialisation of the object, in <code class="code docutils literal"><span class="pre">Evented._createJsObject</span></code>.
+It is important to note that only methods of the registered objects can be called from
+within JS, so arbitrary code cannot be run, and we cannot pass lambdas, but only methods.</p>
+<p>So for every event that leaflet has access to, we have to create a pyqtSignal and a method
+that emits the signal. We also then have to connect the event to the method. For that there
+is a method <code class="code docutils literal"><span class="pre">Evented._connectEventToSignal</span></code> that does that. It also handles
+circular references in the JSON to be returned.</p>
+</div>
+<div class="section" id="handling-async">
+<h2>Handling Async<a class="headerlink" href="#handling-async" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="solved">
+<h3>Solved<a class="headerlink" href="#solved" title="Permalink to this headline">¶</a></h3>
+<p>The largest async problem that was faced was nothing to actually do with JavaScript at all.
+It was rather to do with Qt. Qt has a few methods that are run asynchronously. One of these
+is <code class="code docutils literal"><span class="pre">QWebEnginePage.load()</span></code> which loads html onto the widget.</p>
+<p>The problem with this asynchronicity is that it causes problem with running the next code.
+Anstantiating the map ran a <cite>L.map</cite> in the JS runtime before the page (and thus the
+leaflet library) was loaded, which caused a widget to just be a blank page.</p>
+<p>The solution to this came using <code class="code docutils literal"><span class="pre">QEventLoop</span></code>. An infinite loop was created that only
+quit when the web page emitted a <code class="code docutils literal"><span class="pre">loadFinished</span></code> signal. This ensured that the interpreter
+waited until the html was loaded and only them progressed.</p>
+</div>
+<div class="section" id="unsolved">
+<h3>Unsolved<a class="headerlink" href="#unsolved" title="Permalink to this headline">¶</a></h3>
+<p>The problem that still has not been solved is how to handle the async running of <cite>runJavaScript</cite>.
+If we want the method to return a value from JS, then a similar approach doesn&#8217;t seem to work.
+I have tried numerous combinations of threads, signals, callbacks and channel objects, but
+none of them seem to be able to emit the signal which would break the infinite loop that is
+waiting for a response before it can terminate.</p>
+<p>The problem that I&#8217;m looking to solve is how a method can run some JS code, and then return
+the response from that same code.</p>
+<hr class="docutils" />
+<p>Overall building this package was a great exercise that I learnt a lot out of. I hope
+it helps you in creating some great apps. In case you have any feedback on how this whole
+thing can be implemented better, please raise an issue and let me know, or a pull request
+if you are in the mood for something like that.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyqtlet</a></h1>
+
+
+
+
+
+
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorials.html" title="previous chapter">Tutorials</a></li>
+  </ul></li>
+</ul>
+</div><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-docs.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Implementation Details</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#structure">Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qwebengine">QWebEngine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-the-objects-in-leaflet">Creating the objects in Leaflet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-javascript-communication">Python -&gt; JavaScript Communication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#javascript-python-communication">JavaScript -&gt; Python communication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#handling-async">Handling Async</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#solved">Solved</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unsolved">Unsolved</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Skylark Drones.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/technical.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
