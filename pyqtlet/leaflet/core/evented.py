@@ -27,7 +27,7 @@ class Evented(QObject):
         '''
         super().__init__()
         self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(9)
+        # self._logger.setLevel(9)
         self.response = None
         if Evented.mapWidget:
             return
@@ -42,7 +42,6 @@ class Evented(QObject):
               '    channelObjects = channel.objects;'
               '});')
         self.runJavaScript(js)
-        self.mapWidget.page.titleChanged.connect(lambda: print('title changed'))
 
     def getJsResponse(self, js, callback):
         '''
@@ -76,6 +75,7 @@ class Evented(QObject):
         :param str js: The javascript code
         '''
         self._logger.debug('Running JS: {js}'.format(js=js))
+        print('Running JS: {js}'.format(js=js))
         self.mapWidget.page.runJavaScript(js)
 
     def _createJsObject(self, leafletJsObject):

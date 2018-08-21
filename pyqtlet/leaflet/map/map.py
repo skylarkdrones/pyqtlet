@@ -29,6 +29,9 @@ class Map(Evented):
     clicked = pyqtSignal(dict)
     zoom = pyqtSignal(dict)
     drawCreated = pyqtSignal(dict)
+    # mapId is a static variable shared between all layers
+    # It is used to give unique names to layers
+    mapId = 0
 
     @property
     def layers(self):
@@ -81,21 +84,33 @@ class Map(Evented):
         self.options = options
         self._layers = []
         self._controls = []
-        self._jsName = 'map'
+        self._jsName = self._getNewMapName()
         self._initJs()
         self._connectEventToSignal('click', '_onClick')
         self._connectEventToSignal('zoom', '_onZoom')
         self._connectEventToSignal('draw:created', '_onDrawCreated')
 
+    def _getNewMapName(self):
+        mapName = 'map{}'.format(self.mapId)
+        Map.mapId += 1
+        return mapName
+
     def _initJs(self):
-        jsObject = 'L.map("map"'
+        # First we need to create a new map object in the html
+        js = ('var {mapName}_el = document.createElement("div");'
+              '{mapName}_el.setAttribute("id", "{mapName}");'
+              '{mapName}_el.style.width = "100vw";'
+              '{mapName}_el.style.height = "100vh";'
+              'document.body.appendChild({mapName}_el);').format(mapName=self.jsName)
+        self.runJavaScript(js)
+        jsObject = 'L.map("{mapName}"'.format(mapName=self.jsName)
         if self.options:
             jsObject += ', {options}'.format(options=self._stringifyForJs(self.options))
         jsObject += ')'
         self._createJsObject(jsObject)
 
     def setView(self, latLng, zoom=None, options=None):
-        js = 'map.setView({latLng}'.format(latLng=latLng);
+        js = '{mapName}.setView({latLng}'.format(mapName=self.jsName, latLng=latLng);
         if zoom:
             js += ', {zoom}'.format(zoom=zoom)
         if options:
@@ -106,7 +121,7 @@ class Map(Evented):
     def addLayer(self, layer):
         self._layers.append(layer)
         layer.map = self
-        js = 'map.addLayer({layerName})'.format(layerName=layer.layerName)
+        js = '{mapName}.addLayer({layerName})'.format(mapName=self.jsName, layerName=layer.layerName)
         self.runJavaScript(js)
 
     def removeLayer(self, layer):
@@ -115,13 +130,13 @@ class Map(Evented):
             return
         self._layers.remove(layer)
         layer.map = None
-        js = 'map.removeLayer({layerName})'.format(layerName=layer.layerName)
+        js = '{mapName}.removeLayer({layerName})'.format(mapName=self.jsName, layerName=layer.layerName)
         self.runJavaScript(js)
 
     def addControl(self, control):
         self._controls.append(control)
         control.map = self
-        js = 'map.addControl({controlName})'.format(controlName=control.controlName)
+        js = '{mapName}.addControl({controlName})'.format(mapName=self.jsName, controlName=control.controlName)
         self.runJavaScript(js)
 
     def removeControl(self, control):
@@ -130,56 +145,56 @@ class Map(Evented):
             return
         self._controls.remove(control)
         control.map = None
-        js = 'map.removeControl({controlName})'.format(controlName=control.controlName)
+        js = '{mapName}.removeControl({controlName})'.format(mapName=self.jsName, controlName=control.controlName)
         self.runJavaScript(js)
 
     def getBounds(self, callback):
-        return self.getJsResponse('map.getBounds()', callback)
+        return self.getJsResponse('{mapName}.getBounds()'.format(mapName=self.jsName), callback)
 
     def getCenter(self, callback):
-        return self.getJsResponse('map.getCenter()', callback)
+        return self.getJsResponse('{mapName}.getCenter()'.format(mapName=self.jsName), callback)
 
     def getZoom(self, callback):
-        return self.getJsResponse('map.getZoom()', callback)
+        return self.getJsResponse('{mapName}.getZoom()'.format(mapName=self.jsName), callback)
 
     def getState(self, callback):
-        return self.getJsResponse('getMapState()', callback)
+        return self.getJsResponse('getMapState({jsmap})'.format(jsmap=self.jsname), callback)
 
     def hasLayer(self, layer):
         return layer in self._layers
 
     def setZoom(self, zoom, options=None):
-        js = 'map.setZoom({zoom}'.format(zoom=zoom);
+        js = '{mapName}.setZoom({zoom}'.format(mapName=self.jsName, zoom=zoom)
         if options:
             js += ', {options}'.format(options=options)
         js += ');'
         self.runJavaScript(js)
 
     def setMaxBounds(self, bounds):
-        js = 'map.setMaxBounds({bounds})'.format(bounds=bounds)
+        js = '{mapName}.setMaxBounds({bounds})'.format(mapName=self.jsName, bounds=bounds)
         self.runJavaScript(js)
        
     def fitBounds(self, bounds):
-        js = 'map.fitBounds({bounds})'.format(bounds=bounds)
+        js = '{mapName}.fitBounds({bounds})'.format(mapName=self.jsName, bounds=bounds)
         self.runJavaScript(js)
 
     def setMaxZoom(self, zoom):
-        js = 'map.setMaxZoom({zoom})'.format(zoom=zoom)
+        js = '{mapName}.setMaxZoom({zoom})'.format(mapName=self.jsName, zoom=zoom)
         self.runJavaScript(js)
 
     def setMinZoom(self, zoom):
-        js = 'map.setMinZoom({zoom})'.format(zoom=zoom)
+        js = '{mapName}.setMinZoom({zoom})'.format(mapName=self.jsName, zoom=zoom)
         self.runJavaScript(js)
 
     def panTo(self, latLng, options=None):
-        js = 'map.panTo({latLng}'.format(latLng=latLng);
+        js = '{mapName}.panTo({latLng}'.format(mapName=self.jsName, latLng=latLng);
         if options:
             js += ', {options}'.format(options=options)
         js += ');'
         self.runJavaScript(js)
 
     def flyTo(self, latLng, zoom=None, options=None):
-        js = 'map.flyTo({latLng}'.format(latLng=latLng);
+        js = '{mapName}.flyTo({latLng}'.format(mapName=self.jsName, latLng=latLng);
         if zoom:
             js += ', {zoom}'.format(zoom=zoom)
         if options:

@@ -17,7 +17,7 @@ function copyWithoutCircularReferences(references, object) {
     return cleanObject;
 }
 
-function getMapState() {
+function getMapState(map) {
     var center = map.getCenter();
     var zoom = map.getZoom();
     var bounds = map.getBounds();
