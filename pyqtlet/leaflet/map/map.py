@@ -85,7 +85,7 @@ class Map(Evented):
         self._layers = []
         self._controls = []
         self._jsName = self._getNewMapName()
-        self._initJs()
+        self._initJs(mapWidget)
         self._connectEventToSignal('click', '_onClick')
         self._connectEventToSignal('zoom', '_onZoom')
         self._connectEventToSignal('draw:created', '_onDrawCreated')
@@ -95,19 +95,19 @@ class Map(Evented):
         Map.mapId += 1
         return mapName
 
-    def _initJs(self):
+    def _initJs(self, mapWidget):
         # First we need to create a new map object in the html
-        js = ('var {mapName}_el = document.createElement("div");'
+        js = ('var {mapName}_el = document.getElementById("map");'
               '{mapName}_el.setAttribute("id", "{mapName}");'
               '{mapName}_el.style.width = "100vw";'
-              '{mapName}_el.style.height = "100vh";'
-              'document.body.appendChild({mapName}_el);').format(mapName=self.jsName)
-        self.runJavaScript(js)
-        jsObject = 'L.map("{mapName}"'.format(mapName=self.jsName)
+              '{mapName}_el.style.height = "100vh";').format(mapName=self.jsName)
+        # self.runJavaScript(js)
+        jsObject = 'L.map("{mapName}"'.format(mapName=mapWidget.mapId)
         if self.options:
             jsObject += ', {options}'.format(options=self._stringifyForJs(self.options))
         jsObject += ')'
         self._createJsObject(jsObject)
+        self.runJavaScript('{mapName}.setView([12.97, 77.59], 10);'.format(mapName=self.jsName))
 
     def setView(self, latLng, zoom=None, options=None):
         js = '{mapName}.setView({latLng}'.format(mapName=self.jsName, latLng=latLng);
@@ -158,7 +158,7 @@ class Map(Evented):
         return self.getJsResponse('{mapName}.getZoom()'.format(mapName=self.jsName), callback)
 
     def getState(self, callback):
-        return self.getJsResponse('getMapState({jsmap})'.format(jsmap=self.jsname), callback)
+        return self.getJsResponse('getMapState({jsmap})'.format(jsmap=self.jsName), callback)
 
     def hasLayer(self, layer):
         return layer in self._layers

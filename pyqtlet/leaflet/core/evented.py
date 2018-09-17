@@ -2,6 +2,7 @@ import logging
 import time
 
 from PyQt5.QtCore import QObject
+from PyQt5.QtWebEngineWidgets import QWebEngineScript
 
 from ... import mapwidget
 
@@ -12,6 +13,7 @@ class Evented(QObject):
     Handles initiation, as well as all python<->js communication
     '''
     mapWidget = None
+    mapWidgetId = 0
 
     def __init__(self, mapWidget=None):
         '''
@@ -75,7 +77,6 @@ class Evented(QObject):
         :param str js: The javascript code
         '''
         self._logger.debug('Running JS: {js}'.format(js=js))
-        print('Running JS: {js}'.format(js=js))
         self.mapWidget.page.runJavaScript(js)
 
     def _createJsObject(self, leafletJsObject):
