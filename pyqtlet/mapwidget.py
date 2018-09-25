@@ -4,7 +4,7 @@ import time
 from PyQt5.QtCore import QEventLoop, QObject, QUrl, pyqtSignal
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import ( QWebEngineView, QWebEnginePage, QWebEngineSettings, 
-                                       QWebEngineScript, QWebEngineProfile )
+                                       QWebEngineScript )
 
 
 class MapWidget(QWebEngineView):
@@ -13,9 +13,6 @@ class MapWidget(QWebEngineView):
     Since it is a QWidget, it can be added to any QLayout.
     """
     mapIndex = 0
-    # MapWidget has a QWebEngineProfile, where all the JS is run so that
-    # multiple web views can share the same variables etc.
-    profile = None
     instances = []
 
     @property
@@ -28,11 +25,9 @@ class MapWidget(QWebEngineView):
 
     def __init__(self):
         super().__init__()
-        if not MapWidget.profile:
-            MapWidget.profile = QWebEngineProfile()
         MapWidget.instances.append(self)
         self.mapId = self._getMapId()
-        self._page = QWebEnginePage(MapWidget.profile)
+        self._page = QWebEnginePage()
         self.setPage(self._page)
         self._channel = QWebChannel()
         self._page.setWebChannel(self._channel)
